@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-import { fetchWarehouseItems } from '../../services/warehouseServices'
+import { fetchWarehouseItems } from '../../services/warehouseServices';
 
 const WarehouseDetails = () => {
-  const { id } = useParams()
-  const [items, setItems] = useState([])
+  const { id } = useParams();
+  const [items, setItems] = useState([]);
 
   const loadWarehouseItems = async () => {
     try {
-      const res = await fetchWarehouseItems(id)
-      setItems(res.data.data)
+      const res = await fetchWarehouseItems(id);
+      setItems(res.data.data);
     } catch {
-      toast.error('فشل في جلب محتويات المستودع')
+      toast.error('فشل في جلب محتويات المستودع');
     }
-  }
+  };
 
   useEffect(() => {
-    loadWarehouseItems()
-  }, [id])
+    loadWarehouseItems();
+  }, [id]);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto" dir="rtl">
       <h2 className="text-2xl font-bold mb-4">محتويات المستودع رقم {id}</h2>
       {items.length === 0 ? (
         <p>لا توجد مواد حالياً في هذا المستودع.</p>
@@ -45,7 +45,7 @@ const WarehouseDetails = () => {
         </table>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default WarehouseDetails
+export default WarehouseDetails;

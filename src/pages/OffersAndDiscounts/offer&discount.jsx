@@ -254,11 +254,7 @@ const OffersAndDiscountsPage = () => {
             <Input type="date" value={newDiscount.from_date} onChange={e => setNewDiscount({ ...newDiscount, from_date: e.target.value })} />
             <Input type="date" value={newDiscount.to_date} onChange={e => setNewDiscount({ ...newDiscount, to_date: e.target.value })} />
 
-            <MultiSelect
-              options={branches.map(b => ({ label: b.name, value: b.id }))}
-              selected={branches.filter(b => newDiscount.branches.includes(b.id)).map(b => ({ label: b.name, value: b.id }))}
-              onChange={selected => setNewDiscount({ ...newDiscount, branches: selected.map(s => s.value) })}
-            />
+          
 
             <div className="flex gap-2">
               <Button onClick={handleCreateDiscount}>حفظ</Button>

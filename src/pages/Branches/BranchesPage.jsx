@@ -42,12 +42,13 @@ const BranchesPage = () => {
   };
 
   const handlePageSelect = (page) => {
-    setIsSelectPageModalOpen(false);
-    if (page === 'tables') navigate(`/branches/${selectedBranchId}/table`);
-    else if (page === 'employees') navigate(`/branches/${selectedBranchId}/user`);
-    else if (page === 'invoice') navigate(`/branches/${selectedBranchId}/invoice`);
-    else if (page === 'rate') navigate(`/branches/${selectedBranchId}/rate`);
-  };
+  setIsSelectPageModalOpen(false);
+  if (page === 'tables') navigate(`/branches/${selectedBranchId}/table`);
+  else if (page === 'employees') navigate(`/branches/${selectedBranchId}/user`);
+  else if (page === 'invoice') navigate(`/branches/${selectedBranchId}/invoice`);
+  else if (page === 'rate') navigate(`/branches/${selectedBranchId}/rate`);
+  else if (page === 'warehouse') navigate(`/branches/${selectedBranchId}/warehouse`);
+};
 
   const handleAddBranch = (e) => {
     e.preventDefault();
@@ -155,6 +156,12 @@ const BranchesPage = () => {
               className="block w-full py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition"
             >
               صفحة التقييم
+            </button>
+            <button
+              onClick={() => handlePageSelect('warehouse')}
+              className="block w-full mb-3 mt-3 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition"
+            >
+              صفحة المستودع
             </button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ItemModal = ({ isOpen, onClose, onSave, item }) => {
+const ItemModal = ({ isOpen, onClose, onSave, item, modalType }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -14,7 +14,7 @@ const ItemModal = ({ isOpen, onClose, onSave, item }) => {
         name: item.name || '',
         description: item.description || '',
         price: item.price || '',
-        images: [],
+        images: [], // عند التعديل الصور تكون فاضية
       });
     }
   }, [item]);
@@ -42,7 +42,7 @@ const ItemModal = ({ isOpen, onClose, onSave, item }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
         <h2 className="text-xl font-bold mb-4">
-          {item && item.id ? 'تعديل عنصر' : 'إضافة عنصر جديد'}
+          {modalType === 'edit' ? 'تعديل عنصر' : 'إضافة عنصر جديد'}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -56,16 +56,7 @@ const ItemModal = ({ isOpen, onClose, onSave, item }) => {
               className="w-full border rounded px-3 py-2"
             />
           </div>
-          <div className="mb-4">
-            <label className="block mb-1 font-medium">الوصف</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
+        
           <div className="mb-4">
             <label className="block mb-1 font-medium">السعر</label>
             <input
@@ -77,16 +68,33 @@ const ItemModal = ({ isOpen, onClose, onSave, item }) => {
               className="w-full border rounded px-3 py-2"
             />
           </div>
-          <div className="mb-4">
-            <label className="block mb-1 font-medium">الصور</label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
+
+          {modalType === 'add' && (
+            <div>
+              <div className="mb-4">
+              <label className="block mb-1 font-medium">الصور</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div className="mb-4">
+            <label className="block mb-1 font-medium">الوصف</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
               className="w-full border rounded px-3 py-2"
             />
           </div>
+            </div>
+          )}
+
           <div className="flex justify-end">
             <button
               type="button"

@@ -14,7 +14,7 @@ const Sidebar = () => {
 
       <button onClick={() => navigate('/descount')}><Gift size={24} /></button>
         <button onClick={() => navigate('/tax')}><Receipt size={24} /></button>
-      <button onClick={() => navigate('/warehouse')}><Box size={24} /></button>
+     
       <button onClick={() => navigate('/settings')}><Settings size={24} /></button> 
       <button><LogOut size={24} /></button>
     </div>

@@ -139,12 +139,14 @@ const CategoryItemsPage = () => {
       )}
 
       {isModalOpen && (
-        <ItemModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveItem}
-          item={currentItem || {}}
-        />
+       <ItemModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onSave={handleSaveItem}
+  item={currentItem || {}}
+  modalType={modalType}
+/>
+
       )}
     </div>
   );

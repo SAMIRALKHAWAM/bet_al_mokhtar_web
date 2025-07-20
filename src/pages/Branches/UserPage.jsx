@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getEmployees, createEmployee, deleteEmployee, updateEmployee } from '../../services/usersService';
+import { toast } from 'react-toastify';
+import {
+  getEmployees,
+  createEmployee,
+  deleteEmployee,
+  updateEmployee
+} from '../../services/usersService';
 
 const initialUser = {
   name: '',
+  user_name: '',
+  password: '',
   type: '',
   phone: '',
   address: '',
@@ -14,6 +22,8 @@ const initialUser = {
 
 const fieldLabels = {
   name: 'الاسم',
+  user_name: 'اسم المستخدم',
+  password: 'كلمة السر',
   type: 'الوظيفة',
   phone: 'رقم الهاتف',
   address: 'العنوان',
@@ -23,7 +33,12 @@ const fieldLabels = {
 };
 
 const UserPage = () => {
-  const { id: branchId } = useParams();
+  const { branchId: branchIdFromParams } = useParams();
+  const type = localStorage.getItem('type');
+  const localBranchId = localStorage.getItem('branch_id');
+
+  const branchId = type === 'subadmin' ? localBranchId : branchIdFromParams;
+
   const [users, setUsers] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [newUser, setNewUser] = useState(initialUser);
@@ -31,16 +46,22 @@ const UserPage = () => {
   const [editId, setEditId] = useState(null);
 
   const fetchUsers = () => {
+    console.log("fetch");
     getEmployees().then((data) => {
       if (data.success) {
-        const filtered = data.data.filter((u) => u.branch_id == branchId);
+        const filtered = data.data.filter((u) => String(u.branch_id) === String(branchId));
         setUsers(filtered);
+      } else {
+        toast.error("فشل في جلب الموظفين");
       }
+    }).catch(() => {
+      toast.error("خطأ في الاتصال بالسيرفر");
     });
   };
 
   useEffect(() => {
-    fetchUsers();
+    console.log("branchId : : "+branchId);
+    if (branchId) fetchUsers();
   }, [branchId]);
 
   const handleChange = (e) => {
@@ -48,28 +69,45 @@ const UserPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const payload = { ...newUser, branch_id: branchId };
+  if (!branchId) {
+    toast.error("رقم الفرع غير موجود، الرجاء إعادة المحاولة.");
+    return;
+  }
 
-    const data = editMode
-      ? await updateEmployee(editId, payload)
-      : await createEmployee(payload);
+  const payload = { ...newUser, branch_id: branchId };
+  console.log("🔍 Payload to send:", payload);
 
-    if (data.success) {
-      fetchUsers();
-      closeModal();
-    }
-  };
+  const data = editMode
+    ? await updateEmployee(editId, payload)
+    : await createEmployee(payload);
+
+  if (!data.success) {
+    toast.error("فشل إرسال البيانات. تحقق من الحقول المدخلة.");
+    console.error("🛑 خطأ من السيرفر:", data);
+    return;
+  }
+
+  fetchUsers();
+  closeModal();
+  toast.success(editMode ? "تم التحديث بنجاح" : "تمت الإضافة بنجاح");
+};
+
 
   const handleDelete = async (id) => {
     if (!window.confirm('هل تريد حذف هذا الموظف؟')) return;
     const data = await deleteEmployee(id);
-    if (data.success) fetchUsers();
+    if (data.success) {
+      fetchUsers();
+      toast.success("تم الحذف بنجاح");
+    } else {
+      toast.error("فشل في حذف الموظف");
+    }
   };
 
   const openEditModal = (user) => {
-    const { id, branch_id, branch_name, ...rest } = user; // إزالة id و branch_id و branch_name
+    const { id, branch_id, branch_name, ...rest } = user;
     setNewUser(rest);
     setEditId(user.id);
     setEditMode(true);
@@ -90,9 +128,11 @@ const UserPage = () => {
   };
 
   return (
-    <div className="p-10 space-y-10" dir="rtl">
+    <div dir="rtl" className="p-10 space-y-10" >
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-red-700">موظفو الفرع رقم {branchId}</h2>
+        <h2 className="text-3xl font-bold text-red-700">
+          موظفو الفرع 
+        </h2>
         <button
           onClick={openAddModal}
           className="bg-gradient-to-r from-green-600 to-green-700 hover:scale-105 text-white px-4 py-2 rounded-lg shadow"
@@ -105,6 +145,8 @@ const UserPage = () => {
         {users.map((user) => (
           <div key={user.id} className="bg-white shadow rounded-xl p-4 text-black space-y-1 text-right">
             <p><strong>الاسم:</strong> {user.name}</p>
+            <p><strong>اسم المستخدم:</strong> {user.user_name}</p>
+            <p><strong>كلمة السر:</strong> {user.password}</p>
             <p><strong>الوظيفة:</strong> {user.type}</p>
             <p><strong>رقم الهاتف:</strong> {user.phone}</p>
             <p><strong>العنوان:</strong> {user.address}</p>
@@ -134,7 +176,7 @@ const UserPage = () => {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" dir="rtl">
           <form
             onSubmit={handleSubmit}
-            className="bg-white w-[90%] md:w-[500px] p-6 rounded-xl shadow-xl text-black space-y-4 text-right"
+            className="bg-white w-[90%] md:w-[500px] p-4 rounded-xl shadow-xl text-black space-y-1 text-right"
           >
             <h3 className="text-2xl font-semibold text-center">
               {editMode ? 'تعديل موظف' : 'إضافة موظف جديد'}
@@ -143,7 +185,7 @@ const UserPage = () => {
             {Object.entries(newUser).map(([key, value]) => {
               if (key === 'type') {
                 return (
-                  <div key={key} className="mb-3">
+                  <div key={key} className="mb-1">
                     <label className="block mb-1 font-medium">{fieldLabels[key]}</label>
                     <select
                       name={key}
@@ -164,7 +206,7 @@ const UserPage = () => {
               }
 
               return (
-                <div key={key} className="mb-3">
+                <div key={key} className="mb-1">
                   <label className="block mb-1 font-medium">{fieldLabels[key]}</label>
                   <input
                     type={key === 'age' ? 'number' : 'text'}

@@ -1,18 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { getInvoices } from '../../services/invoiceService';
+import { getInvoices, printInvoiceUrl } from '../../services/invoiceService';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
+import { gettype,getBranchId } from '../../utils/api';
 
 const InvoicePage = () => {
   const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const type = gettype();
+const branchId = String(getBranchId() || '');
 
   const fetchInvoices = async () => {
+    setLoading(true);
     try {
+      console.log('✅ نوع المستخدم:', type);
+      console.log('✅ رقم الفرع من localStorage:', branchId);
+
       const data = await getInvoices();
-      setInvoices(data);
+      console.log('✅ عدد الفواتير المحملة:', data.length);
+
+   const filtered = branchId
+  ? data.filter((inv) => String(inv.branch_id) === branchId)
+  : data;
+
+
+      setInvoices(filtered);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'فشل في جلب الفواتير');
     }
+    setLoading(false);
   };
 
   const printInvoice = (id) => {
@@ -24,8 +41,12 @@ const InvoicePage = () => {
   }, []);
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div dir="rtl" 
+    className="p-6 space-y-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white  ">
       <h1 className="text-3xl font-bold mb-6">🧾 الفواتير</h1>
+
+      {loading && <p>جاري التحميل...</p>}
+      {!loading && invoices.length === 0 && <p>لا توجد فواتير لعرضها.</p>}
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {invoices.map((invoice) => (
@@ -41,9 +62,7 @@ const InvoicePage = () => {
             <p>الخصم: {invoice.discount} ل.س</p>
             <p>السعر النهائي: {invoice.final_price} ل.س</p>
 
-            <Button className="bg-blue-600 mt-2" onClick={() => printInvoice(invoice.id)}>
-              طباعة الفاتورة
-            </Button>
+           
           </div>
         ))}
       </div>

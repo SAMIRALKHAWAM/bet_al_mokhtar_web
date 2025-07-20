@@ -1,10 +1,9 @@
 import axios from 'axios';
-
 import { BASE_URL } from '../utils/api';
 
 export const getInvoices = async () => {
   try {
-    const res = await axios.get(`${BASE_URL}/get_one_invoice`);
+    const res = await axios.get(`${BASE_URL}/get_invoices`);
     if (res.data.success) {
       return res.data.data;
     } else {

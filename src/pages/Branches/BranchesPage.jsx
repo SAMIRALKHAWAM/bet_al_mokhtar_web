@@ -78,7 +78,7 @@ const BranchesPage = () => {
   };
 
   return (
-    <div className="p-10">
+    <div dir="rtl"className="p-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-red-700">الفروع</h1>
         <button

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { fetchWarehouses } from '../../services/warehouseServices';
+import { fetchWarehouseByBranch } from '../../services/warehouseServices';
+
 
 const WarehousesPage = () => {
   const [warehouses, setWarehouses] = useState([]);
@@ -11,7 +12,8 @@ const WarehousesPage = () => {
 
   const loadWarehouses = async () => {
     try {
-      const res = await fetchWarehouses(branchId);
+     const res = await fetchWarehouseByBranch(branchId);
+
       console.log('API Response:', res.data);
       const warehouse = res.data.data;
 

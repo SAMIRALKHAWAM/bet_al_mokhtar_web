@@ -1,12 +1,14 @@
+// src/pages/SettingsPage.jsx
 import React, { useState } from 'react'
 import { useTheme } from '../Context/ThemeContext'
 import { useFont } from '../Context/FontContext'
+
 const SettingsPage = () => {
   const { themeName, setThemeName, themes } = useTheme()
+  const { fontSize, setFontSize } = useFont()
 
   const [language, setLanguage] = useState('ar')
   const [notifications, setNotifications] = useState(true)
-  const { fontSize, setFontSize } = useFont()
 
   const resetSettings = () => {
     setThemeName('light')
@@ -16,14 +18,14 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="p-8 min-h-screen transition duration-300">
+    <div dir="rtl" className="p-8 min-h-screen transition-colors duration-300 bg-[var(--tw-bg)] text-[var(--tw-text)]" style={{ fontSize: fontSize === 'small' ? '0.875rem' : fontSize === 'medium' ? '1rem' : '1.25rem' }}>
       <h1 className="text-3xl font-bold mb-8">⚙️ الإعدادات</h1>
 
       {/* اختيار الثيم */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">المظهر</h2>
         <div className="flex gap-4 flex-wrap">
-          {Object.keys(themes).map((key) => (
+          {themes.map((key) => (
             <button
               key={key}
               onClick={() => setThemeName(key)}
@@ -45,7 +47,6 @@ const SettingsPage = () => {
         </div>
       </div>
 
-
       {/* حجم الخط */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">حجم الخط</h2>
@@ -58,14 +59,25 @@ const SettingsPage = () => {
                 fontSize === size ? 'bg-gray-200 dark:bg-gray-700' : ''
               }`}
             >
-              {size === 'small'
-                ? 'صغير'
-                : size === 'medium'
-                ? 'متوسط'
-                : 'كبير'}
+              {size === 'small' ? 'صغير' : size === 'medium' ? 'متوسط' : 'كبير'}
             </button>
           ))}
         </div>
+      </div>
+
+     
+
+      {/* اللغة */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">اللغة</h2>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+        </select>
       </div>
 
       {/* إعادة ضبط */}

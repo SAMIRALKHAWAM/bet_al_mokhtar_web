@@ -1,39 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getBranchRates } from '../../services/branchRatesService';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { getBranchId,gettype } from '../../utils/api';
 
 const BranchRatesPage = () => {
   const [rates, setRates] = useState([]);
-  const [filters, setFilters] = useState({
-    userId: '',
-    branchId: '',
-    rate: '',
-  });
+   const branchId=getBranchId();
+   const type=gettype();
 
   const fetchRates = async () => {
-    try {
-      const data = await getBranchRates(filters);
-      setRates(data);
-    } catch {
-      toast.error('فشل في جلب التقييمات');
-    }
-  };
+  try {
+    const data = await getBranchRates(); // اجلب أولاً كل البيانات
+
+    const filtered = branchId
+      ? data.filter((inv) => String(inv.branch_id) === String(branchId))
+      : data;
+
+    setRates(filtered);
+  } catch {
+    toast.error('فشل في جلب التقييمات');
+  }
+};
+
 
   useEffect(() => {
     fetchRates();
   }, []);
 
-  const handleFilter = () => {
-    fetchRates();
-  };
-
   return (
     <div dir="rtl" className="p-8 space-y-8 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
       <h1 className="text-4xl font-bold mb-6 text-right">⭐ تقييمات الفروع</h1>
 
-      
       {rates.length === 0 ? (
         <p className="text-center text-gray-500 mt-8">لا توجد تقييمات </p>
       ) : (
@@ -54,14 +51,7 @@ const BranchRatesPage = () => {
                   <span className="font-semibold">الوصف:</span> {rate.description}
                 </p>
                 <p className="text-sm text-gray-500">
-                  <span className="font-semibold">التاريخ:</span>{' '}
-                  {new Date(rate.created_at).toLocaleDateString('ar-EG', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })}
+                 
                 </p>
               </div>
             </div>

@@ -1,34 +1,18 @@
-
+// src/Context/ThemeContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
 const ThemeContext = createContext()
 
-const themes = {
-  light: {
-    background: 'bg-white',
-    text: 'text-black',
-  },
-  dark: {
-    background: 'bg-gray-900',
-    text: 'text-white',
-  },
-  blue: {
-    background: 'bg-blue-100',
-    text: 'text-blue-900',
-  },
-  green: {
-    background: 'bg-green-100',
-    text: 'text-green-900',
-  },
-}
+const themes = ['light', 'dark', 'blue', 'green']
 
 export const ThemeProvider = ({ children }) => {
   const [themeName, setThemeName] = useState('light')
 
   useEffect(() => {
-    document.documentElement.className = '' 
-    document.documentElement.classList.add(themes[themeName].background)
-    document.documentElement.classList.add(themes[themeName].text)
+    // إزالة أي ثيم سابق
+    themes.forEach(theme => document.documentElement.classList.remove(theme))
+    // أضف الثيم الحالي
+    document.documentElement.classList.add(themeName)
   }, [themeName])
 
   return (

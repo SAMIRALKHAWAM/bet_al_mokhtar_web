@@ -11,13 +11,13 @@ import InvoicePrintView from './pages/Cashier/InvoicePrintView.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import WarehouseManagerPage from './pages/WarehouseManger/WarehouseManagerPage.jsx'
 
-// صفحات الأدمن فقط
+
 import BranchPage from './pages/Branches/BranchesPage.jsx'
 import CategoriesPage from './pages/Categories/CategoriesPage.jsx'
 import OffersAndDiscountsPage from './pages/OffersAndDiscounts/offer&discount.jsx'
 import TaxesPage from './pages/Tax/TaxesPage.jsx'
 
-// صفحات مشتركة (admin + subadmin) مربوطة بالفروع
+
 import TablePage from './pages/Branches/TablePage.jsx'
 import InvoicesPage from './pages/Branches/invoice.jsx'
 import BranchRatesPage from './pages/Branches/rate.jsx'
@@ -39,7 +39,7 @@ const App = () => {
     }
   }, [])
 
-  // مسارات مشتركة بين الأدمن و السب أدمن (مربوطة بفرع)
+
   const sharedBranchRoutes = [
     { path: '/branches/:branchId/table', element: <TablePage /> },
     { path: '/branches/:branchId/user', element: <UserPage /> },
@@ -57,10 +57,10 @@ const App = () => {
     <div className="flex">
       <div className="flex-1">
         <Routes>
-          {/* تسجيل الدخول */}
+      
           <Route path="/login" element={<LoginPage />} />
 
-          {/* إعادة توجيه حسب نوع المستخدم */}
+         
           <Route
             path="/"
             element={
@@ -82,11 +82,11 @@ const App = () => {
             }
           />
 
-          {/* الكاشير */}
+          
           <Route path="/cashier" element={<CashierPage />} />
           <Route path="/cashier/print/:id" element={<InvoicePrintView />} />
 
-          {/* مدير مستودع */}
+          
           <Route
             path="/warehouse-manager"
             element={
@@ -97,7 +97,7 @@ const App = () => {
             }
           />
 
-          {/* لوحة الأدمن / نائب الأدمن */}
+         
           <Route
             path="/admin"
             element={
@@ -108,7 +108,7 @@ const App = () => {
             }
           />
 
-          {/* صفحات الأدمن فقط */}
+        
           <Route
             path="/branch"
             element={
@@ -146,7 +146,7 @@ const App = () => {
             }
           />
 
-          {/* صفحات مشتركة (admin + subadmin) مربوطة بالفروع */}
+ 
           {sharedBranchRoutes.map(({ path, element }, index) => (
             <Route
               key={index}
@@ -160,10 +160,10 @@ const App = () => {
             />
           ))}
 
-          {/* عرض عناصر التصنيفات */}
+         
           <Route path="/categories/:id" element={<CategoryItemsPage />} />
 
-          {/* رابط غير معروف */}
+        
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

@@ -1,4 +1,4 @@
-// permissions.js
+
 
 export const getPermissions = (type) => {
   switch (type) {

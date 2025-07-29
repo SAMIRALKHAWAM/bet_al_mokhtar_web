@@ -1,9 +1,9 @@
-/* src/index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* تعريف متغيرات الثيم */
+
 .light {
   --tw-bg: #ffffff;
   --tw-text: #000000;

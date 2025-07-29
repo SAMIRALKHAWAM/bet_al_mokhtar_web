@@ -55,7 +55,7 @@ export default function MaterialsManager() {
 
   return (
     <div className="space-y-6">
-      {/* إضافة مادة جديدة */}
+     
       <div className="bg-white shadow-md p-4 rounded-lg space-y-4">
         <h2 className="text-xl font-semibold">إضافة مادة</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -71,7 +71,7 @@ export default function MaterialsManager() {
         </button>
       </div>
 
-      {/* قائمة المواد */}
+     
       <div className="bg-white shadow-md p-4 rounded-lg">
         <h2 className="text-xl font-semibold mb-4">المواد</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -87,11 +87,11 @@ export default function MaterialsManager() {
         </div>
       </div>
 
-      {/* إدخال المواد */}
+   
       <div className="bg-white shadow-md p-4 rounded-lg">
         <h2 className="text-xl font-semibold mb-4">إدخال مواد</h2>
 
-        {/* اختيار الفرع */}
+       
         <select className="border p-2 rounded w-full mb-4" onChange={handleBranchChange} value={warehouseData.branch_id}>
           <option value="">اختر الفرع</option>
           {branches.map(branch => (
@@ -99,7 +99,7 @@ export default function MaterialsManager() {
           ))}
         </select>
 
-        {/* اختيار المواد */}
+       
         {warehouseData.materials.map((mat, idx) => (
           <div key={idx} className=" md:grid-cols-4 gap-4 mb-2">
             <select className="border p-2 rounded" value={mat.material_id} onChange={(e) => {

@@ -1,5 +1,4 @@
 
-// src/components/ui/multiselect.jsx
 import React from 'react'
 
 export const MultiSelect = ({ options = [], selected = [], setSelected }) => {

@@ -1,4 +1,4 @@
-// src/components/ui/button.jsx
+
 export const Button = ({ className = '', children, ...props }) => {
   return (
     <button

@@ -1,4 +1,4 @@
-// src/pages/SettingsPage.jsx
+
 import React, { useState } from 'react'
 import { useTheme } from '../Context/ThemeContext'
 import { useFont } from '../Context/FontContext'
@@ -21,7 +21,7 @@ const SettingsPage = () => {
     <div dir="rtl" className="p-8 min-h-screen transition-colors duration-300 bg-[var(--tw-bg)] text-[var(--tw-text)]" style={{ fontSize: fontSize === 'small' ? '0.875rem' : fontSize === 'medium' ? '1rem' : '1.25rem' }}>
       <h1 className="text-3xl font-bold mb-8">⚙️ الإعدادات</h1>
 
-      {/* اختيار الثيم */}
+   
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">المظهر</h2>
         <div className="flex gap-4 flex-wrap">
@@ -47,7 +47,7 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      {/* حجم الخط */}
+    
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">حجم الخط</h2>
         <div className="flex gap-4">
@@ -67,7 +67,7 @@ const SettingsPage = () => {
 
      
 
-      {/* اللغة */}
+   
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">اللغة</h2>
         <select
@@ -80,7 +80,7 @@ const SettingsPage = () => {
         </select>
       </div>
 
-      {/* إعادة ضبط */}
+      
       <div className="mt-10">
         <button
           onClick={resetSettings}

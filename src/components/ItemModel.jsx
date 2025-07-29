@@ -14,7 +14,7 @@ const ItemModal = ({ isOpen, onClose, onSave, item, modalType }) => {
         name: item.name || '',
         description: item.description || '',
         price: item.price || '',
-        images: [], // عند التعديل الصور تكون فاضية
+        images: [], 
       });
     }
   }, [item]);

@@ -1,4 +1,4 @@
-// tailwind.config.js
+
 export default {
   content: [
     "./index.html",
@@ -15,7 +15,7 @@ export default {
         large: '1.25rem',
       },
       colors: {
-        // هنا فقط للتوثيق، الألوان المستخدمة عبر CSS Variables
+      
         light: {
           bg: '#ffffff',
           text: '#000000',

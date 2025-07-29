@@ -1,4 +1,4 @@
-// services/Cashier/cashierServices.js
+
 import { BASE_URL } from "../../utils/api";
 import axios from "axios";
 

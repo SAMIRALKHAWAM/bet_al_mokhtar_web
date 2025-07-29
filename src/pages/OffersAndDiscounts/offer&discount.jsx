@@ -44,7 +44,7 @@ const OffersAndDiscountsPage = () => {
     branches: []
   })
 
-  // Fetch data
+ 
   useEffect(() => {
     loadOffers()
     loadDiscounts()
@@ -128,7 +128,7 @@ const OffersAndDiscountsPage = () => {
     }
   }
 
-  // Add/remove offer items
+  
   const addOfferItem = () => {
     setNewOffer({
       ...newOffer,
@@ -146,7 +146,7 @@ const OffersAndDiscountsPage = () => {
     <div className="p-6 space-y-10 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white" dir="rtl">
       <h1 className="text-3xl font-bold mb-6">📋 العروض والخصومات</h1>
 
-      {/* عروض */}
+     
       <section>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">🛍️ العروض</h2>
@@ -236,7 +236,7 @@ const OffersAndDiscountsPage = () => {
         </div>
       </section>
 
-      {/* خصومات */}
+    
       <section>
         <div className="flex justify-between items-center mb-4 mt-10">
           <h2 className="text-2xl font-semibold">💸 الخصومات</h2>

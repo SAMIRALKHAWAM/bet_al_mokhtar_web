@@ -1,4 +1,4 @@
-// src/components/ui/textarea.jsx
+
 export const Textarea = ({ className = '', ...props }) => {
   return (
     <textarea

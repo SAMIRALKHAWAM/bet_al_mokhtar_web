@@ -3,8 +3,8 @@ import { Home, Tag, LogOut, MapPin, Box, Users, DollarSign, Utensils, Layout, Se
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  // const type = localStorage.getItem("type");
- const type ="admin";
+  const type = localStorage.getItem("type");
+ // const type ="admin";
   const branchId = localStorage.getItem("branch_id");
 
   return (

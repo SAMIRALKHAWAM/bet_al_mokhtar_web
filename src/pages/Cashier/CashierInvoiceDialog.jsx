@@ -46,7 +46,7 @@ const handleAction = async () => {
       table_id: invoice.table_id,
       branch_id: invoice.branch_id,
       status: newStatus,
-      cashier_id: 2, // لاحقاً ممكن تجيب من user context
+      cashier_id: 2, 
       discount: manualDiscount,
       discount_id: selectedDiscountId || null,
     };
@@ -56,7 +56,7 @@ const handleAction = async () => {
     setInvoice({ ...invoice, status: newStatus });
 
     if (newStatus === "print") {
-      // تصدير PDF كما في النسخة السابقة
+      
       const canvas = await html2canvas(invoiceRef.current, { scale: 3 });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");

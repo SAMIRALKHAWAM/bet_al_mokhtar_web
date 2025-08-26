@@ -61,7 +61,7 @@ const TaxesPage = () => {
     <div dir="rtl" className="p-6 space-y-10 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <h1 className="text-3xl font-bold mb-6">💰 الضرائب</h1>
 
-      {/* إضافة ضريبة */}
+     
       <div className="bg-white dark:bg-gray-800 p-4 rounded shadow space-y-4 mb-6 text-right">
         <h3 className="text-xl font-bold">إضافة ضريبة جديدة</h3>
         <Input

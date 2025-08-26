@@ -7,58 +7,58 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // أضفنا متغير loading
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
 
-    const user = {
-      type: 'admin',
-      branchId: 1
-    };
+    // const user = {
+    //   type: 'admin',
+    //   branchId: 1
+    // };
 
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem("branch_id", user.branchId); // ✅ هي ضرورية
+    // localStorage.setItem('user', JSON.stringify(user));
+    // localStorage.setItem("branch_id", user.branchId); // ✅ هي ضرورية
 
-    setLoading(true);
+    // setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      navigate('/admin');
-    }, 1000); // تأخير ثانية واحدة
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   navigate('/admin');
+    // }, 1000); // تأخير ثانية واحدة
 
     
     
-    setError("");
+    // setError("");
 
-    // try {
-    //   const user = await login(username, password);
-    //   localStorage.setItem("user", JSON.stringify(user));
-    //   localStorage.setItem("type", user.type);
-    //   if (user.branchId) localStorage.setItem("branch_id", user.branchId);
+    try {
+      const user = await login(username, password);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("type", user.type);
+      if (user.branchId) localStorage.setItem("branch_id", user.branchId);
 
-    //   switch (user.type) {
-    //     case "admin":
-    //     case "subadmin":
-    //       navigate("/admin");
-    //       break;
-    //     case "cashier":
-    //       navigate("/cashier");
-    //       break;
-    //     case "warehouseman":
-    //       navigate("/warehouse-manager");
-    //       break;
-    //     case "accountant":
-    //       navigate("/dashboard/accounting");
-    //       break;
-    //     default:
-    //       navigate("/unauthorized");
-    //   }
-    // } catch (err) {
-    //   setError(err.message);
-    // }
+      switch (user.type) {
+        case "admin":
+        case "subadmin":
+          navigate("/admin");
+          break;
+        case "cashier":
+          navigate("/cashier");
+          break;
+        case "warehouseman":
+          navigate("/warehouse-manager");
+          break;
+        case "accountant":
+          navigate("/dashboard/accounting");
+          break;
+        default:
+          navigate("/unauthorized");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (

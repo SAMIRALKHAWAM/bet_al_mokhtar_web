@@ -28,6 +28,11 @@ const TablePage = () => {
         if (data.total>0) {
           console.log("total:"+data.total);
            console.log("data:"+data.data);
+            console.log("tables data:", data.data);
+
+            const invalidTables = data.data.filter(t => !t.id || isNaN(Number(t.id)));
+            console.log("🚨 طاولات فيها مشكلة بالـ id:", invalidTables);
+
           setTables(data.data);
         } else {
           console.error("فشل في جلب الطاولات:", data.message);

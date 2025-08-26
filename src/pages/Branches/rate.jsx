@@ -10,7 +10,7 @@ const BranchRatesPage = () => {
 
   const fetchRates = async () => {
   try {
-    const data = await getBranchRates(); // اجلب أولاً كل البيانات
+    const data = await getBranchRates(); 
 
     const filtered = branchId
       ? data.filter((inv) => String(inv.branch_id) === String(branchId))

@@ -23,7 +23,7 @@ export function DialogTitle({ children }) {
 export function DialogFooter({ children }) {
   return <div className="mt-6 flex justify-end gap-2">{children}</div>
 }
-// في أسفل dialog.jsx
+
 
 export function DialogTrigger({ onClick, children }) {
   return (
@@ -32,7 +32,7 @@ export function DialogTrigger({ onClick, children }) {
     </button>
   );
 }
-// داخل dialog.jsx أو الملف الذي تضع فيه مكونات الـ Dialog
+
 
 export function DialogContent({ children, className = "" }) {
   return (

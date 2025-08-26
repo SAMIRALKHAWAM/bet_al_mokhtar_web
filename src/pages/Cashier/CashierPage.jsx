@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchInvoicesByStatus } from "../../services/CashierServices/cashierservices";
+import { fetchInvoicesByStatus } from "../../services/CashierServices/cashierServices";
 import CashierInvoiceDialog from "./CashierInvoiceDialog";
 
-const statuses = ["print", "checkout", "done"];
+const statuses = ["checkout", "done", "print"];
 
 export default function CashierPage() {
   const [invoices, setInvoices] = useState([]);
@@ -14,15 +14,11 @@ export default function CashierPage() {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.branchId) {
-      setBranchId(user.branchId);
-    }
+    if (user && user.branchId) setBranchId(user.branchId);
   }, []);
 
   useEffect(() => {
-    if (branchId) {
-      loadInvoices();
-    }
+    if (branchId) loadInvoices();
   }, [status, branchId]);
 
   const loadInvoices = async () => {
@@ -30,9 +26,8 @@ export default function CashierPage() {
     setError("");
     try {
       const res = await fetchInvoicesByStatus(branchId, status);
-      if (res.success) {
-        setInvoices(res.data);
-      } else {
+      if (res.success) setInvoices(res.data);
+      else {
         setInvoices([]);
         setError("لا توجد فواتير حالياً");
       }
@@ -44,7 +39,7 @@ export default function CashierPage() {
   };
 
   return (
-    <div dir='rtl'className="max-w-5xl mx-auto mt-8 p-6 bg-white shadow rounded">
+    <div dir="rtl" className="max-w-5xl mx-auto mt-8 p-6 bg-white shadow rounded">
       <h1 className="text-2xl mb-4">فواتير الكاشير</h1>
 
       <div className="mb-4">
@@ -92,12 +87,12 @@ export default function CashierPage() {
                 <td className="border p-2">{inv.final_price}</td>
                 <td className="border p-2">{inv.status}</td>
                 <td className="border p-2">
-                  {inv.status === "checkout" && (
+                  {(inv.status === "checkout" || inv.status === "done") && (
                     <button
                       className="bg-blue-600 text-white px-3 py-1 rounded"
                       onClick={() => setSelectedInvoiceId(inv.id)}
                     >
-                      عرض
+                      {inv.status === "checkout" ? "✅ إتمام" : "🖨️ طباعة"}
                     </button>
                   )}
                 </td>

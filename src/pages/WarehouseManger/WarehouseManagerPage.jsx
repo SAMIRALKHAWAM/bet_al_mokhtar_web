@@ -28,7 +28,7 @@ export default function WarehouseManagerPage() {
   try {
     const res = await fetchMaterialsByBranch(branchId);
     if (res.success) {
-      // دمج المواد المتكررة بنفس material_id
+    
       const mergedMap = new Map();
       res.data.forEach((item) => {
         const key = item.material_id;

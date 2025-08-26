@@ -1,9 +1,10 @@
 export const BASE_URL = 'https://samir.comma-test.com/api/admin';
+// export const BASE_URL = 'http://192.168.17.1:8000/api/admin';
 export const BASE_IMAGE_URL = 'https://samir.comma-test.com/storage/';
 export const getUser = () => JSON.parse(localStorage.getItem("user"));
-// export const gettype = () => localStorage.getItem("type");
+export const gettype = () => localStorage.getItem("type");
 
-export const gettype = "admin";
+// export const gettype = "admin";
 
 export const getBranchId = () => {
   const user = getUser();

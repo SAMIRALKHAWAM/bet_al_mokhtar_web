@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { BASE_URL } from '../utils/api';
 
 export const fetchItemsByCategory = async (categoryId) => {
@@ -33,20 +34,27 @@ export const updateItem = async (itemId, formData) => {
   data.append('name', formData.name);
   data.append('description', formData.description);
   data.append('price', formData.price);
+  data.append('category_id', formData.category_id); 
 
   formData.images.forEach((img, i) => {
     data.append(`images[${i}]`, img);
   });
+  for (let [key, value] of data.entries()) {
+  console.log(`${key}: ${value}`);
+}
 
-  const res = await fetch(`${BASE_URL}/update_one_item/${itemId}`, {
-    method: 'POST',
-    body: data,
+
+  const res = await axios.post(`${BASE_URL}/update_one_item/${itemId}`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
-  const result = await res.json();
+  const result = res.data;
   if (!result.success) throw new Error('Failed to update item');
   return result;
 };
+
 
 export const deleteItem = async (itemId) => {
   const res = await fetch(`${BASE_URL}/delete_one_item/${itemId}`, {

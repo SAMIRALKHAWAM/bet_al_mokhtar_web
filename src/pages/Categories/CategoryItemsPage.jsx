@@ -51,7 +51,7 @@ const CategoryItemsPage = () => {
           console.error(err);
         });
     } else {
-      updateItem(currentItem.id, formData)
+      updateItem(currentItem.id, { ...formData, category_id: categoryId })
         .then(() => {
           loadItems();
           setIsModalOpen(false);
@@ -92,13 +92,14 @@ const CategoryItemsPage = () => {
       </div>
 
       {items.length === 0 ? (
-        <p className="text-center text-gray-500">لا يوجد وجبات في هذا القسم.</p>
+        <p className="text-center text-gray-500">لا يوجد وجبات في هذا الصنف.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {items.map((item) => (
             <div key={item.id} className="bg-white p-6 rounded-xl shadow-md">
               <h2 className="text-2xl font-semibold text-red-700 mb-2">{item.name}</h2>
-              <p className="text-gray-600 mb-2">السعر: {item.price} د.أ</p>
+              <p className="text-gray-600 mb-2">السعر: {item.price} ل.س</p>
+               <p className="text-gray-600 mb-2">الوصف: {item.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-4">
                 {item.item_images?.map((img) => (

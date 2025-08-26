@@ -14,7 +14,7 @@ const ItemModal = ({ isOpen, onClose, onSave, item, modalType }) => {
         name: item.name || '',
         description: item.description || '',
         price: item.price || '',
-        images: [], // عند التعديل الصور تكون فاضية
+        images: [], 
       });
     }
   }, [item]);
@@ -68,10 +68,17 @@ const ItemModal = ({ isOpen, onClose, onSave, item, modalType }) => {
               className="w-full border rounded px-3 py-2"
             />
           </div>
-
-          {modalType === 'add' && (
-            <div>
-              <div className="mb-4">
+           <div className="mb-4">
+            <label className="block mb-1 font-medium">الوصف</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+             <div className="mb-4">
               <label className="block mb-1 font-medium">الصور</label>
               <input
                 type="file"
@@ -82,16 +89,20 @@ const ItemModal = ({ isOpen, onClose, onSave, item, modalType }) => {
               />
             </div>
 
-            <div className="mb-4">
-            <label className="block mb-1 font-medium">الوصف</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
+          {modalType === 'add' && (
+            <div>
+              {/* <div className="mb-4">
+              <label className="block mb-1 font-medium">الصور</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div> */}
+
+           
             </div>
           )}
 

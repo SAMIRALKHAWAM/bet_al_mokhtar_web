@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { getDiscounts,getInvoiceDetails,changeInvoiceStatus } from "../../services/CashierServices/cashierservices";
+import { getDiscounts, getInvoiceDetails, changeInvoiceStatus } from "../../services/CashierServices/cashierServices";
 import { useNavigate } from "react-router-dom";
 
-
 export default function CashierInvoiceDialog({ invoiceId, onClose }) {
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const [invoice, setInvoice] = useState(null);
   const [items, setItems] = useState([]);
   const [discounts, setDiscounts] = useState([]);
@@ -34,42 +32,62 @@ export default function CashierInvoiceDialog({ invoiceId, onClose }) {
   const fetchDiscounts = async () => {
     try {
       const res = await getDiscounts();
-      if (res.data.success) {
-        setDiscounts(res.data.data);
-      }
+      if (res.data.success) setDiscounts(res.data.data);
     } catch (error) {
       console.error("فشل في جلب الخصومات", error);
     }
   };
 
-  const handlePrint = async () => {
-    const cashierId = 2; // عدل حسب المستخدم
-    try {
-      const payload = {
-        table_id: invoice.table_id,
-        branch_id: invoice.branch_id,
-        status: "print",
-        cashier_id: cashierId,
-        discount: manualDiscount,
-        discount_id: selectedDiscountId,
-      };
+const handleAction = async () => {
+  try {
+    let newStatus = invoice.status === "checkout" ? "done" : "print";
 
-      const res = await changeInvoiceStatus(invoice.id, payload);
-      if (res.data.success) {
-        alert("✅ تم تنفيذ أمر الطباعة بنجاح");
-        onClose(); // أغلق النافذة
-        navigate(`/cashier/print/${invoiceId}`);
+    const payload = {
+      table_id: invoice.table_id,
+      branch_id: invoice.branch_id,
+      status: newStatus,
+      cashier_id: 2, // لاحقاً ممكن تجيب من user context
+      discount: manualDiscount,
+      discount_id: selectedDiscountId || null,
+    };
+
+    await changeInvoiceStatus(invoice.id, payload);
+
+    setInvoice({ ...invoice, status: newStatus });
+
+    if (newStatus === "print") {
+      // تصدير PDF كما في النسخة السابقة
+      const canvas = await html2canvas(invoiceRef.current, { scale: 3 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+      let position = 0;
+      pdf.addImage(imgData, "PNG", 0, position, pageWidth, pdfHeight);
+      while (pdfHeight - position > pageHeight) {
+        position += pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, -position, pageWidth, pdfHeight);
       }
-    } catch (error) {
-      alert("❌ حدث خطأ أثناء تنفيذ الطباعة");
-      console.error(error);
+
+      pdf.save(`invoice_${invoice.id}.pdf`);
     }
-  };
+
+    onClose();
+  } catch (error) {
+    alert("❌ حدث خطأ أثناء تنفيذ الإجراء");
+    console.error(error);
+  }
+};
+
 
   if (!invoice) return <div className="p-4">جاري التحميل...</div>;
 
   return (
-    <div dir='rtl'className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div dir="rtl" className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded shadow w-full max-w-2xl">
         <h2 className="text-xl font-bold mb-4">معلومات الفاتورة #{invoice.id}</h2>
         <p>🪑 رقم الطاولة: {invoice.table_id}</p>
@@ -118,10 +136,10 @@ export default function CashierInvoiceDialog({ invoiceId, onClose }) {
 
         <div className="flex justify-between mt-6">
           <button
-            onClick={handlePrint}
+            onClick={handleAction}
             className="bg-green-600 text-white px-4 py-2 rounded"
           >
-            🖨️ Print
+            {invoice.status === "checkout" ? "✅ إتمام" : "🖨️ Print"}
           </button>
           <button
             onClick={onClose}

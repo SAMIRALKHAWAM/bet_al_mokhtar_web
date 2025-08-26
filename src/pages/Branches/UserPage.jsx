@@ -194,10 +194,10 @@ const UserPage = () => {
                       className="border w-full p-2 rounded text-right bg-white"
                     >
                       <option value="">اختر الوظيفة</option>
-                      <option value="cashier">أمين صندوق</option>
+                      <option value="cashier">كاشير </option>
                       <option value="accountant">محاسب</option>
                       <option value="waiter">نادل</option>
-                      <option value="captain">كابتن صالة</option>
+                      <option value="captain">كابتن </option>
                       <option value="warehouseman">أمين مستودع</option>
                       <option value="deliveryman">موصل طلبات</option>
                     </select>

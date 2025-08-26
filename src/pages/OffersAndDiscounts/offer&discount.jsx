@@ -4,20 +4,19 @@ import { toast } from 'react-toastify'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { MultiSelect } from '@/components/ui/multiselect'
 import { BasicMultiSelect } from '../../components/ui/BasicMultiSelect'
 
-import { fetchOffers,
- fetchDiscounts,
+import {
+  fetchOffers,
+  fetchDiscounts,
   fetchBranches,
   fetchItems,
   createOffer,
   createDiscount
-
- } from '../../services/offer_discount'
+} from '../../services/offer_discount'
+import { getBranchId } from '../../utils/api'
 
 const OffersAndDiscountsPage = () => {
-  // States
   const [offers, setOffers] = useState([])
   const [discounts, setDiscounts] = useState([])
   const [branches, setBranches] = useState([])
@@ -44,19 +43,33 @@ const OffersAndDiscountsPage = () => {
     branches: []
   })
 
-  // Fetch data
+
   useEffect(() => {
-    loadOffers()
-    loadDiscounts()
     loadBranches()
+    loadDiscounts()
     loadItems()
   }, [])
 
+  
+  useEffect(() => {
+    if (branches.length > 0) {
+      loadOffers()
+    }
+  }, [branches])
+
   const loadOffers = async () => {
     try {
-      const res = await fetchOffers()
+      //  const branchId = localStorage.getItem("branch_id")
+       const branchId =getBranchId()
+      if (!branchId) {
+        console.warn("🚫 ما في branchId متاح")
+        return
+      }
+
+      const res = await fetchOffers(branchId)
       setOffers(res.data.data)
-    } catch {
+    } catch (error) {
+      console.error(error)
       toast.error('فشل في جلب العروض')
     }
   }
@@ -88,7 +101,6 @@ const OffersAndDiscountsPage = () => {
     }
   }
 
-  // Create offer
   const handleCreateOffer = async () => {
     try {
       await createOffer(newOffer)
@@ -108,7 +120,6 @@ const OffersAndDiscountsPage = () => {
     }
   }
 
-  // Create discount
   const handleCreateDiscount = async () => {
     try {
       await createDiscount(newDiscount)
@@ -128,7 +139,6 @@ const OffersAndDiscountsPage = () => {
     }
   }
 
-  // Add/remove offer items
   const addOfferItem = () => {
     setNewOffer({
       ...newOffer,
@@ -139,14 +149,17 @@ const OffersAndDiscountsPage = () => {
   const removeOfferItem = (index) => {
     const updated = [...newOffer.items]
     updated.splice(index, 1)
-    setNewOffer({ ...newOffer, items: updated.length ? updated : [{ item_id: '', price: '', quantity: '' }] })
+    setNewOffer({
+      ...newOffer,
+      items: updated.length ? updated : [{ item_id: '', price: '', quantity: '' }]
+    })
   }
 
   return (
     <div className="p-6 space-y-10 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white" dir="rtl">
       <h1 className="text-3xl font-bold mb-6">📋 العروض والخصومات</h1>
 
-      {/* عروض */}
+    
       <section>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">🛍️ العروض</h2>
@@ -253,8 +266,6 @@ const OffersAndDiscountsPage = () => {
             <Input type="number" placeholder="النسبة المئوية (%)" value={newDiscount.percent} onChange={e => setNewDiscount({ ...newDiscount, percent: e.target.value })} />
             <Input type="date" value={newDiscount.from_date} onChange={e => setNewDiscount({ ...newDiscount, from_date: e.target.value })} />
             <Input type="date" value={newDiscount.to_date} onChange={e => setNewDiscount({ ...newDiscount, to_date: e.target.value })} />
-
-          
 
             <div className="flex gap-2">
               <Button onClick={handleCreateDiscount}>حفظ</Button>

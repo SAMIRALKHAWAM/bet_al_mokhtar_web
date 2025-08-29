@@ -1,4 +1,3 @@
-// src/pages/Auth/LoginPage.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authServices";
@@ -12,33 +11,17 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-
-    // const user = {
-    //   type: 'admin',
-    //   branchId: 1
-    // };
-
-    // localStorage.setItem('user', JSON.stringify(user));
-    // localStorage.setItem("branch_id", user.branchId); // ✅ هي ضرورية
-
-    // setLoading(true);
-
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   navigate('/admin');
-    // }, 1000); // تأخير ثانية واحدة
-
-    
-    
-    // setError("");
+    setError("");
+    setLoading(true);
 
     try {
       const user = await login(username, password);
+
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("type", user.type);
       if (user.branchId) localStorage.setItem("branch_id", user.branchId);
 
+      // توجيه حسب نوع المستخدم
       switch (user.type) {
         case "admin":
         case "subadmin":
@@ -57,7 +40,9 @@ export default function LoginPage() {
           navigate("/unauthorized");
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "فشل تسجيل الدخول");
+    } finally {
+      setLoading(false);
     }
   };
 

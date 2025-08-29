@@ -8,6 +8,7 @@ import { ThemeProvider } from './Context/ThemeContext.jsx'
 import { FontProvider } from './Context/FontContext.jsx'
 import './i18n'
 
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

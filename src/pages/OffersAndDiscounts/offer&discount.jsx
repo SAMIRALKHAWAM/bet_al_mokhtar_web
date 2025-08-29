@@ -7,14 +7,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { BasicMultiSelect } from '../../components/ui/BasicMultiSelect'
 
 import {
-  fetchOffers,
-  fetchDiscounts,
+  fetchAllOffers,
+  fetchAllDiscounts,
   fetchBranches,
   fetchItems,
   createOffer,
   createDiscount
 } from '../../services/offer_discount'
-import { getBranchId } from '../../utils/api'
 
 const OffersAndDiscountsPage = () => {
   const [offers, setOffers] = useState([])
@@ -43,40 +42,25 @@ const OffersAndDiscountsPage = () => {
     branches: []
   })
 
-
   useEffect(() => {
     loadBranches()
+    loadOffers()
     loadDiscounts()
     loadItems()
   }, [])
 
-  
-  useEffect(() => {
-    if (branches.length > 0) {
-      loadOffers()
-    }
-  }, [branches])
-
   const loadOffers = async () => {
     try {
-      //  const branchId = localStorage.getItem("branch_id")
-       const branchId =getBranchId()
-      if (!branchId) {
-        console.warn("🚫 ما في branchId متاح")
-        return
-      }
-
-      const res = await fetchOffers(branchId)
+      const res = await fetchAllOffers()
       setOffers(res.data.data)
     } catch (error) {
-      console.error(error)
       toast.error('فشل في جلب العروض')
     }
   }
 
   const loadDiscounts = async () => {
     try {
-      const res = await fetchDiscounts()
+      const res = await fetchAllDiscounts()
       setDiscounts(res.data.data)
     } catch {
       toast.error('فشل في جلب الخصومات')
@@ -157,12 +141,12 @@ const OffersAndDiscountsPage = () => {
 
   return (
     <div className="p-6 space-y-10 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white" dir="rtl">
-      <h1 className="text-3xl font-bold mb-6">📋 العروض والخصومات</h1>
+      <h1 className="text-3xl font-bold mb-6">📋 إدارة العروض والخصومات (مدير المطعم)</h1>
 
-    
+      {/* 🛍️ العروض */}
       <section>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">🛍️ العروض</h2>
+          <h2 className="text-2xl font-semibold">🛍️ كل العروض</h2>
           {!showOfferForm && (
             <Button onClick={() => setShowOfferForm(true)}>+ إضافة عرض</Button>
           )}
@@ -238,21 +222,59 @@ const OffersAndDiscountsPage = () => {
           </div>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {offers.map(offer => (
-            <div key={offer.id} className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-              <h3 className="font-bold text-lg">{offer.name}</h3>
-              <p>{offer.description}</p>
-              <p className="text-sm text-gray-500 mt-1">من {offer.from_date} إلى {offer.to_date}</p>
-            </div>
-          ))}
+       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+  {offers.map((offer) => (
+    <div
+      key={offer.id}
+      className="bg-white dark:bg-gray-800 p-4 rounded shadow"
+    >
+      <h3 className="font-bold text-lg">{offer.name}</h3>
+      <p>{offer.description}</p>
+      <p className="text-sm text-gray-500 mt-1">
+        من {offer.from_date} إلى {offer.to_date}
+      </p>
+
+      {/* ✅ عرض الأصناف داخل العرض */}
+      {offer.offer_items?.length > 0 && (
+        <div className="mt-3">
+          <h4 className="text-md font-semibold mb-2">🍽 الأصناف:</h4>
+          <div className="space-y-2">
+            {offer.offer_items.map((oi) => (
+              <div
+                key={oi.id}
+                className="flex items-center gap-3 border rounded-lg p-2"
+              >
+                {oi.item?.item_images?.length > 0 && (
+                  <img
+                    src={oi.item.item_images[0].image}
+                    alt={oi.item.name}
+                    className="w-14 h-14 rounded-lg object-cover"
+                  />
+                )}
+                <div>
+                  <p className="font-medium">{oi.item?.name}</p>
+                  <p className="text-sm text-gray-600">
+                    الكمية: {oi.quantity}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    السعر ضمن العرض: {oi.price} ل.س
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+    </div>
+  ))}
+</div>
+
       </section>
 
-      {/* خصومات */}
+      {/* 💸 الخصومات */}
       <section>
         <div className="flex justify-between items-center mb-4 mt-10">
-          <h2 className="text-2xl font-semibold">💸 الخصومات</h2>
+          <h2 className="text-2xl font-semibold">💸 كل الخصومات</h2>
           {!showDiscountForm && (
             <Button onClick={() => setShowDiscountForm(true)}>+ إضافة خصم</Button>
           )}
@@ -266,6 +288,15 @@ const OffersAndDiscountsPage = () => {
             <Input type="number" placeholder="النسبة المئوية (%)" value={newDiscount.percent} onChange={e => setNewDiscount({ ...newDiscount, percent: e.target.value })} />
             <Input type="date" value={newDiscount.from_date} onChange={e => setNewDiscount({ ...newDiscount, from_date: e.target.value })} />
             <Input type="date" value={newDiscount.to_date} onChange={e => setNewDiscount({ ...newDiscount, to_date: e.target.value })} />
+
+            <section className="mt-6">
+              <h2 className="text-2xl font-semibold mb-2">📍 اختر الفروع</h2>
+              <BasicMultiSelect
+                options={branches.map(b => ({ label: b.name, value: b.id }))}
+                selected={newDiscount.branches}
+                onChange={selected => setNewDiscount({ ...newDiscount, branches: selected })}
+              />
+            </section>
 
             <div className="flex gap-2">
               <Button onClick={handleCreateDiscount}>حفظ</Button>
@@ -281,6 +312,9 @@ const OffersAndDiscountsPage = () => {
               <p>الكود: {discount.code}</p>
               <p>النسبة: {discount.percent}%</p>
               <p className="text-sm text-gray-500 mt-1">من {discount.from_date} إلى {discount.to_date}</p>
+              {discount.branches?.length > 0 && (
+                <p className="text-xs text-gray-400">الفروع: {discount.branches.map(b => b.name).join(', ')}</p>
+              )}
             </div>
           ))}
         </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDiscounts, getInvoiceDetails, changeInvoiceStatus } from "../../services/CashierServices/cashierServices";
+import { getDiscounts,getInvoiceDetails,changeInvoiceStatus, printInvoicePDF } from "../../services/CashierServices/cashierServices";
 import { useNavigate } from "react-router-dom";
 
 export default function CashierInvoiceDialog({ invoiceId, onClose }) {
@@ -38,56 +38,43 @@ export default function CashierInvoiceDialog({ invoiceId, onClose }) {
     }
   };
 
-const handleAction = async () => {
-  try {
-    let newStatus = invoice.status === "checkout" ? "done" : "print";
+  const handlePrint = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+     const cashierId=user.id;
 
-    const payload = {
-      table_id: invoice.table_id,
-      branch_id: invoice.branch_id,
-      status: newStatus,
-      cashier_id: 2, // لاحقاً ممكن تجيب من user context
-      discount: manualDiscount,
-      discount_id: selectedDiscountId || null,
-    };
+      const payload = {
+        table_id: invoice.table_id,
+        branch_id: invoice.branch_id,
+        status: "print",
+        cashier_id: cashierId,
+        discount: manualDiscount,
+        discount_id: selectedDiscountId,
+        items
+      };
 
-    await changeInvoiceStatus(invoice.id, payload);
+      // إصدار PDF
+      const res = await printInvoicePDF(invoice.id);
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      window.open(url, '_blank');
 
-    setInvoice({ ...invoice, status: newStatus });
-
-    if (newStatus === "print") {
-      // تصدير PDF كما في النسخة السابقة
-      const canvas = await html2canvas(invoiceRef.current, { scale: 3 });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
-
-      let position = 0;
-      pdf.addImage(imgData, "PNG", 0, position, pageWidth, pdfHeight);
-      while (pdfHeight - position > pageHeight) {
-        position += pageHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, -position, pageWidth, pdfHeight);
+      // تغيير الحالة
+      const res2 = await changeInvoiceStatus(invoice.id, payload);
+      if (res2.data.success) {
+        alert("✅ تم تنفيذ أمر الطباعة بنجاح");
+        onClose();
+        navigate(`/cashier/print/${invoiceId}`);
       }
-
-      pdf.save(`invoice_${invoice.id}.pdf`);
+    } catch (error) {
+      console.error(error);
+      alert("❌ حدث خطأ أثناء تنفيذ الطباعة");
     }
-
-    onClose();
-  } catch (error) {
-    alert("❌ حدث خطأ أثناء تنفيذ الإجراء");
-    console.error(error);
-  }
-};
-
+  };
 
   if (!invoice) return <div className="p-4">جاري التحميل...</div>;
 
   return (
-    <div dir="rtl" className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div dir='rtl' className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded shadow w-full max-w-2xl">
         <h2 className="text-xl font-bold mb-4">معلومات الفاتورة #{invoice.id}</h2>
         <p>🪑 رقم الطاولة: {invoice.table_id}</p>
@@ -100,9 +87,7 @@ const handleAction = async () => {
         <h3 className="mt-4 font-bold">📦 العناصر:</h3>
         <ul className="list-disc pl-6">
           {items.map((item) => (
-            <li key={item.id}>
-              {item.name} - {item.quantity} × {item.price} = {item.total_price}
-            </li>
+            <li key={item.id}>{item.name} - {item.quantity} × {item.price} = {item.total_price}</li>
           ))}
         </ul>
 
@@ -127,19 +112,17 @@ const handleAction = async () => {
           >
             <option value="">— اختر خصم —</option>
             {discounts.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name} - {d.percent}%
-              </option>
+              <option key={d.id} value={d.id}>{d.name} - {d.percent}%</option>
             ))}
           </select>
         </div>
 
         <div className="flex justify-between mt-6">
           <button
-            onClick={handleAction}
+            onClick={handlePrint}
             className="bg-green-600 text-white px-4 py-2 rounded"
           >
-            {invoice.status === "checkout" ? "✅ إتمام" : "🖨️ Print"}
+            🖨️ Print
           </button>
           <button
             onClick={onClose}

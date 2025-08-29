@@ -38,7 +38,7 @@ export default function WarehouseManagerPage() {
         } else {
           mergedMap.set(key, {
             ...item,
-            name: item.name || `مادة ${item.material_id}`,
+            name: item.material_name || `مادة ${item.material_id}`,
             quantity: item.quantity ?? 0,
             addQty: 0,
             removeQty: 0,

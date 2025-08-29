@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Home, Tag, LogOut, MapPin, Box, Users, DollarSign, Utensils, Layout, Settings, Receipt, Gift } from "lucide-react";
+import { Archive ,Home, Tag, LogOut, MapPin, Box, Users, DollarSign, Utensils, Layout, Settings,Table, Receipt, Gift,FileText  } from "lucide-react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -28,19 +28,22 @@ const Sidebar = () => {
           <button onClick={() => navigate("/tax")}>
             <Receipt size={24} />
           </button>
+            <button onClick={() => navigate("/Materials")}>
+            <Archive size={24} />
+          </button>
         </>
       )}
 
       {type === "subadmin" && (
         <>
           <button onClick={() => navigate(`/branches/${branchId}/table`)}>
-            <Layout size={24} />
+            <Table size={24} />
           </button>
           <button onClick={() => navigate(`/branches/${branchId}/user`)}>
             <Users size={24} />
           </button>
           <button onClick={() => navigate(`/branches/${branchId}/invoice`)}>
-            <DollarSign size={24} />
+            <FileText size={24} />
           </button>
           <button onClick={() => navigate(`/branches/${branchId}/rate`)}>
             <Tag size={24} />
@@ -60,9 +63,7 @@ const Sidebar = () => {
         </>
       )}
 
-      <button onClick={() => navigate("/settings")}>
-        <Settings size={24} />
-      </button>
+      
       <button onClick={() => {
         localStorage.clear();
         navigate('/login');

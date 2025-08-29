@@ -31,14 +31,16 @@ const WarehouseDetails = () => {
           <thead className="bg-gray-100">
             <tr>
               <th className="p-3 border">اسم المادة</th>
-              <th className="p-3 border">الكمية</th>
+              <th className="p-3 border">الواحدة</th>
+              <th className="p-3 border">السعر</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
                 <td className="p-3 border">{item.name}</td>
-                <td className="p-3 border">{item.quantity}</td>
+                <td className="p-3 border">{item.unit}</td>
+                  <td className="p-3 border">{item.price}</td>
               </tr>
             ))}
           </tbody>

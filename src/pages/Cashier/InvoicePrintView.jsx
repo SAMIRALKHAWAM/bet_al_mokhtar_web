@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getInvoiceDetails, changeInvoiceStatus, printInvoice } from "../../services/CashierServices/cashierServices";
+import { getInvoiceDetails, changeInvoiceStatus,fetchInvoiceById } from "../../services/CashierServices/cashierServices";
 
 export default function InvoicePrintView() {
   const { id } = useParams();
@@ -41,12 +41,12 @@ export default function InvoicePrintView() {
         items: invoice.items || [],
       };
 
-      // إصدار PDF قبل تحويل الحالة
+     
       const resPDF = await printInvoice(id);
       const url = window.URL.createObjectURL(new Blob([resPDF.data], { type: 'application/pdf' }));
       window.open(url, '_blank');
 
-      // تغيير الحالة إلى done
+     
       await changeInvoiceStatus(id, payload);
 
       navigate("/cashier");

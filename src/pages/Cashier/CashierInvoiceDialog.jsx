@@ -77,14 +77,14 @@ export default function CashierInvoiceDialog({ invoiceId, onClose }) {
     <div dir='rtl' className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded shadow w-full max-w-2xl">
         <h2 className="text-xl font-bold mb-4">معلومات الفاتورة #{invoice.id}</h2>
-        <p>🪑 رقم الطاولة: {invoice.table_id}</p>
-        <p>🏢 الفرع: {invoice.branch_name}</p>
-        <p>💰 السعر الكامل: {invoice.full_price}</p>
-        <p>💸 الضريبة: {invoice.tax}</p>
-        <p>🔻 الخصم: {invoice.discount}</p>
-        <p>✅ السعر النهائي: {invoice.final_price}</p>
+        <p> رقم الطاولة: {invoice.table_id}</p>
+        <p> الفرع: {invoice.branch_name}</p>
+        <p> السعر الكامل: {invoice.full_price}</p>
+        <p> الضريبة: {invoice.tax}</p>
+        <p> الخصم: {invoice.discount}</p>
+        <p>السعر النهائي: {invoice.final_price}</p>
 
-        <h3 className="mt-4 font-bold">📦 العناصر:</h3>
+        <h3 className="mt-4 font-bold"> العناصر:</h3>
         <ul className="list-disc pl-6">
           {items.map((item) => (
             <li key={item.id}>{item.name} - {item.quantity} × {item.price} = {item.total_price}</li>

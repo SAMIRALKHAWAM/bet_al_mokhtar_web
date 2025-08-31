@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { BASE_URL } from '../utils/api';
 
-// جلب كل الفواتير لكل الصفحات
+
 export const getAllInvoices = async (branchId = null) => {
   let allInvoices = [];
   let page = 1;

@@ -48,7 +48,7 @@ const BranchRatesPage = () => {
                   <span className="font-semibold">التقييم:</span> {rate.rate}
                 </p>
                 <p>
-                  <span className="font-semibold">الوصف:</span> {rate.description}
+                  <span className="font-semibold">الوصف:</span> {rate.description||"--"}
                 </p>
                 <p className="text-sm text-gray-500">
                  

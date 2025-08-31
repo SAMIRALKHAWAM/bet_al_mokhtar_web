@@ -9,7 +9,7 @@ import {
 } from "../../services/PurchaseInvoiceServices";
 
 export default function PurchaseInvoicePage() {
-  const user = JSON.parse(localStorage.getItem("user")); // المحاسب المسجل
+  const user = JSON.parse(localStorage.getItem("user")); 
   const branchId = user?.branchId;
   const accountantId = user?.id;
 
@@ -61,7 +61,6 @@ export default function PurchaseInvoicePage() {
 
   const handleAddInvoice = async () => {
     if (!items.length) return toast.warning("أضف مادة واحدة على الأقل");
-
     try {
       await addPurchaseInvoice({
         branch_id: branchId,
@@ -88,7 +87,10 @@ export default function PurchaseInvoicePage() {
   };
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white" dir="rtl">
+    <div
+      className="p-6 space-y-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white"
+      dir="rtl"
+    >
       <h1 className="text-3xl font-bold mb-6">🧾 فواتير الشراء</h1>
 
       {/* إضافة فاتورة جديدة */}
@@ -139,7 +141,7 @@ export default function PurchaseInvoicePage() {
             />
 
             <button
-              className="bg-red-500 text-white px-2 py-1 rounded"
+              className="!text-red-700 !border !border-red-300 px-2 py-1 rounded hover:!bg-red-100"
               onClick={() => {
                 const updated = [...items];
                 updated.splice(idx, 1);
@@ -152,14 +154,16 @@ export default function PurchaseInvoicePage() {
         ))}
 
         <button
-          className="bg-gray-200 px-3 py-1 rounded"
-          onClick={() => setItems([...items, { material_id: "", quantity: 1, price: 0 }])}
+          className="!bg-red-100 !text-red-700 px-3 py-1 rounded hover:!bg-red-200"
+          onClick={() =>
+            setItems([...items, { material_id: "", quantity: 1, price: 0 }])
+          }
         >
           + مادة جديدة
         </button>
 
         <button
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
+          className="!bg-red-700 !text-white px-4 py-2 rounded mt-2 hover:!bg-red-800"
           onClick={handleAddInvoice}
         >
           حفظ الفاتورة
@@ -169,30 +173,33 @@ export default function PurchaseInvoicePage() {
       {/* قائمة الفواتير */}
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {invoices.map((inv) => (
-          <div key={inv.id} className="bg-white dark:bg-gray-800 p-4 rounded shadow space-y-2">
+          <div
+            key={inv.id}
+            className="bg-white dark:bg-gray-800 p-4 rounded shadow space-y-2"
+          >
             <h2 className="font-bold text-xl">فاتورة #{inv.id}</h2>
             <p>السعر الكلي: {inv.full_price.toLocaleString()} ل.س</p>
             <p>تاريخ الإنشاء: {new Date(inv.created_at).toLocaleString()}</p>
 
             <button
-              className="bg-blue-500 text-white px-3 py-1 rounded"
+              className="!bg-red-700 !text-white px-3 py-1 rounded hover:!bg-red-800"
               onClick={() => loadInvoiceLines(inv.id)}
             >
               عرض التفاصيل
             </button>
             <button
-              className="bg-red-600 text-white px-3 py-1 rounded ml-2"
+              className="!text-red-700 !border !border-red-300 px-3 py-1 rounded hover:!bg-red-100 ml-2"
               onClick={() => handleDeleteInvoice(inv.id)}
             >
               حذف
             </button>
 
-            {/* تفاصيل الفاتورة */}
             {selectedInvoiceId === inv.id && invoiceLines.length > 0 && (
               <div className="mt-2 border-t pt-2">
                 {invoiceLines.map((line) => (
                   <p key={line.id}>
-                    {line.material_name} - {line.quantity} قطعة - {line.price} ل.س
+                    {line.material_name} - {line.quantity} قطعة - {line.price}{" "}
+                    ل.س
                   </p>
                 ))}
               </div>

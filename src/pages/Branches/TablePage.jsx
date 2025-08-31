@@ -11,57 +11,41 @@ import {
 
 const TablePage = () => {
   const branchId = getBranchId();
-  console.log("branchId =", branchId);
-
   const [tables, setTables] = useState([]);
-  const [formData, setFormData] = useState({
-    id: "",
-    table_number: "",
-    chair_number: "",
-  });
+  const [formData, setFormData] = useState({ id: "", table_number: "", chair_number: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchTables = () => {
-    console.log("branchId 2 =", branchId);
-    getTables(branchId)
-      .then((data) => {
-        if (data.total>0) {
-          console.log("total:"+data.total);
-           console.log("data:"+data.data);
-            console.log("tables data:", data.data);
+  // جلب الطاولات
+  const fetchTables = async () => {
+    if (!branchId) return;
 
-            const invalidTables = data.data.filter(t => !t.id || isNaN(Number(t.id)));
-            console.log("🚨 طاولات فيها مشكلة بالـ id:", invalidTables);
+    try {
+      const data = await getTables(branchId);
 
-          setTables(data.data);
-        } else {
-          console.error("فشل في جلب الطاولات:", data.message);
-        }
-      })
-      .catch((err) => console.error("خطأ في جلب الطاولات:", err));
+      if (data.total > 0) {
+        const validTables = data.data.filter(t => t.id && !isNaN(Number(t.id)));
+        setTables(validTables);
+      } else {
+        setTables([]);
+        console.error("لا توجد طاولات لهذا الفرع:", data.message);
+      }
+    } catch (err) {
+      console.error("خطأ في جلب الطاولات:", err);
+    }
   };
 
   useEffect(() => {
-    if (branchId){
-      console.log("fetchTables branchId:"+branchId);
-      fetchTables();
-    } 
+    if (branchId) fetchTables();
   }, [branchId]);
 
   const openModal = (table = null) => {
-    setFormData(
-      table || { id: "", table_number: "", chair_number: "" }
-    );
+    setFormData(table || { id: "", table_number: "", chair_number: "" });
     setIsModalOpen(true);
   };
 
   const handleAddTable = async (e) => {
     e.preventDefault();
-    const maxTableNumber = Math.max(
-      0,
-      ...tables.map((t) => Number(t.table_number))
-    );
-
+    const maxTableNumber = Math.max(0, ...tables.map(t => Number(t.table_number)));
     const newTable = {
       table_number: maxTableNumber + 1,
       chair_number: formData.chair_number,
@@ -97,11 +81,8 @@ const TablePage = () => {
   const handleDeleteTable = async (id) => {
     if (!window.confirm("هل أنت متأكد من الحذف؟")) return;
     const data = await deleteTable(id);
-    if (data.success) {
-      fetchTables();
-    } else {
-      console.error("فشل في الحذف:", data.message);
-    }
+    if (data.success) fetchTables();
+    else console.error("فشل في الحذف:", data.message);
   };
 
   return (
@@ -117,7 +98,7 @@ const TablePage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {tables.map((table) => (
+        {tables.map(table => (
           <div
             key={table.id}
             className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer flex flex-col items-center"
@@ -128,18 +109,11 @@ const TablePage = () => {
             <p className="text-gray-700 font-semibold mb-4">
               عدد الكراسي: {table.chair_number}
             </p>
-
             <div className="flex gap-4">
-              <button
-                onClick={() => openModal(table)}
-                className="text-green-600 hover:text-green-800"
-              >
+              <button onClick={() => openModal(table)} className="text-green-600 hover:text-green-800">
                 <Pencil size={20} />
               </button>
-              <button
-                onClick={() => handleDeleteTable(table.id)}
-                className="text-red-600 hover:text-red-800"
-              >
+              <button onClick={() => handleDeleteTable(table.id)} className="text-red-600 hover:text-red-800">
                 <Trash2 size={20} />
               </button>
             </div>

@@ -1,6 +1,7 @@
 import { BASE_URL } from "../../utils/api";
+import axios from "axios";
 
-// جلب كل فواتير الشراء لفرع معين
+
 export const fetchPurchaseInvoices = async (branchId) => {
   const res = await fetch(`${BASE_URL}/get_purchase_invoices?branchId=${branchId}`);
   const result = await res.json();
@@ -8,13 +9,19 @@ export const fetchPurchaseInvoices = async (branchId) => {
   return result;
 };
 
-// جلب تفاصيل خطوط الفاتورة (المواد)
-export const fetchPurchaseInvoiceLines = async (invoiceId) => {
-  const res = await fetch(`${BASE_URL}/get_purchase_invoice_lines/${invoiceId}`);
-  const result = await res.json();
-  if (!res.ok || !result.success) throw new Error(result.message || "فشل جلب خطوط الفاتورة");
-  return result.data;
+
+export const fetchInvoiceLines = async (invoiceId) => {
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/get_purchase_invoice_lines/${invoiceId}`
+    );
+    return Array.isArray(res.data?.data) ? res.data.data : []; 
+  } catch (err) {
+    console.error("Error fetching invoice lines:", err);
+    return []; // 🔥 رجّع Array فاضية لو صار خطأ
+  }
 };
+
 
 // إنشاء فاتورة شراء جديدة
 export const addPurchaseInvoice = async (payload) => {
@@ -40,7 +47,7 @@ export const deletePurchaseInvoice = async (invoiceId) => {
   return result.data;
 };
 
-// جلب المواد من المستودع لفرع معين
+
 export const fetchWarehouseMaterials = async (branchId) => {
   const res = await fetch(`${BASE_URL}/get_warehouse_materials?branchId=${branchId}`);
   const result = await res.json();
@@ -48,6 +55,15 @@ export const fetchWarehouseMaterials = async (branchId) => {
   return result;
 };
 
+
+
+
+ export const fetchInvoiceById = async (invoiceId) => {
+  const res = await fetch(`${BASE_URL}/print_invoice/${invoiceId}`);
+  const result = await res.json();
+  if (!res.ok || !result.success) throw new Error(result.message || "فشل جلب الفاتورة");
+  return result.data; 
+};
 
 
 export const fetchAllDoneInvoices = async (branchId) => {

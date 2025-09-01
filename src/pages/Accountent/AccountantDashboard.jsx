@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   tableCell: { textAlign: "right", fontSize: 12 }
 });
 
-// PDF لفاتورة الشراء العادية
+
 const InvoiceDocument = ({ invoice }) => {
   const items = Array.isArray(invoice.items) ? invoice.items : [];
   return (
@@ -111,7 +111,7 @@ const DoneInvoiceDocument = ({ invoiceData }) => {
         <Text dir="rtl" style={{ fontSize: 16, marginTop: 10, marginBottom: 4 ,direction: "rtl" }}>الخصومات</Text>
         {discounts.length > 0 ? discounts.map((disc) => (
           <Text style={{ fontSize: 16, marginTop: 10 ,direction: "rtl" }} key={disc.id}>{disc.name} - {disc.amount?.toLocaleString()}</Text>
-        )) : <Text>لا يوجد خصومات</Text>}
+        )) : <Text style={{ direction: "rtl" }}>لا يوجد خصومات</Text>}
 
        
         <Text  style={{ fontSize: 16, marginTop: 10 ,direction: "rtl" }}>السعر الكلي: {invoice.full_price?.toLocaleString()}</Text>

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { pdf, Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
-import amiriTTF from "../../fonts/Amiri-Regular.ttf"; 
+import amiriTTF from "../../fonts/Amiri-Regular.ttf";
 import {
   fetchInvoicesByStatus,
   changeInvoiceStatus,
   fetchInvoiceById,
   fetchAllReservations,
-  deleteReservation
+  deleteReservation,
 } from "../../services/CashierServices/cashierServices";
-import { getBranchId } from "../../utils/api";
+import CashierInvoiceDialog from "./CashierInvoiceDialog";
 
 // تسجيل خط عربي
 Font.register({ family: "Amiri", src: amiriTTF });
@@ -23,9 +23,26 @@ function DoneInvoiceDocument({ invoiceData }) {
     page: { padding: 20, fontSize: 12, fontFamily: "Amiri", direction: "rtl" },
     header: { fontSize: 18, marginBottom: 15, fontWeight: "bold", textAlign: "center", direction: "rtl" },
     text: { direction: "rtl", textAlign: "right", marginBottom: 5 },
-    table: { display: "table", width: "auto", borderStyle: "solid", borderWidth: 1, borderRightWidth: 0, borderBottomWidth: 0, marginTop: 10, direction: "rtl" },
+    table: {
+      display: "table",
+      width: "auto",
+      borderStyle: "solid",
+      borderWidth: 1,
+      borderRightWidth: 0,
+      borderBottomWidth: 0,
+      marginTop: 10,
+      direction: "rtl",
+    },
     tableRow: { flexDirection: "row-reverse", direction: "rtl" },
-    tableCol: { width: "20%", borderStyle: "solid", borderWidth: 1, borderLeftWidth: 0, borderTopWidth: 0, padding: 5, direction: "rtl" },
+    tableCol: {
+      width: "20%",
+      borderStyle: "solid",
+      borderWidth: 1,
+      borderLeftWidth: 0,
+      borderTopWidth: 0,
+      padding: 5,
+      direction: "rtl",
+    },
     tableCell: { fontSize: 12, textAlign: "right", direction: "rtl" },
     totals: { marginTop: 10, textAlign: "right", fontSize: 12, direction: "rtl" },
   });
@@ -39,38 +56,82 @@ function DoneInvoiceDocument({ invoiceData }) {
 
         <View style={rtlStyles.table}>
           <View style={[rtlStyles.tableRow, { backgroundColor: "#ddd" }]}>
-            <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>الاسم</Text></View>
-            <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>الوصف</Text></View>
-            <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>السعر</Text></View>
-            <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>الكمية</Text></View>
-            <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>الإجمالي</Text></View>
+            <View style={rtlStyles.tableCol}>
+              <Text style={rtlStyles.tableCell}>الاسم</Text>
+            </View>
+            <View style={rtlStyles.tableCol}>
+              <Text style={rtlStyles.tableCell}>الوصف</Text>
+            </View>
+            <View style={rtlStyles.tableCol}>
+              <Text style={rtlStyles.tableCell}>السعر</Text>
+            </View>
+            <View style={rtlStyles.tableCol}>
+              <Text style={rtlStyles.tableCell}>الكمية</Text>
+            </View>
+            <View style={rtlStyles.tableCol}>
+              <Text style={rtlStyles.tableCell}>الإجمالي</Text>
+            </View>
           </View>
 
-          {allItems.length > 0 ? allItems.map((item, idx) => (
-            <View style={rtlStyles.tableRow} key={idx}>
-              <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>{item.name}</Text></View>
-              <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>{item.description || "-"}</Text></View>
-              <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>{(item.price || 0).toLocaleString()}</Text></View>
-              <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>{item.quantity}</Text></View>
-              <View style={rtlStyles.tableCol}><Text style={rtlStyles.tableCell}>{(item.total_price || 0).toLocaleString()}</Text></View>
-            </View>
-          )) : <Text style={rtlStyles.text}>لا يوجد مواد</Text>}
+          {allItems.length > 0 ? (
+            allItems.map((item, idx) => (
+              <View style={rtlStyles.tableRow} key={idx}>
+                <View style={rtlStyles.tableCol}>
+                  <Text style={rtlStyles.tableCell}>{item.name}</Text>
+                </View>
+                <View style={rtlStyles.tableCol}>
+                  <Text style={rtlStyles.tableCell}>{item.description || "-"}</Text>
+                </View>
+                <View style={rtlStyles.tableCol}>
+                  <Text style={rtlStyles.tableCell}>{(item.price || 0).toLocaleString()}</Text>
+                </View>
+                <View style={rtlStyles.tableCol}>
+                  <Text style={rtlStyles.tableCell}>{item.quantity}</Text>
+                </View>
+                <View style={rtlStyles.tableCol}>
+                  <Text style={rtlStyles.tableCell}>{(item.total_price || 0).toLocaleString()}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={rtlStyles.text}>لا يوجد مواد</Text>
+          )}
         </View>
 
         <Text style={rtlStyles.totals}>الضرائب:</Text>
-        {taxes.length > 0 ? taxes.map((tax) => (
-          <Text key={tax.id} style={rtlStyles.text}>{tax.tax_name} - {tax.percent}% - {(tax.amount || 0).toLocaleString()}</Text>
-        )) : <Text style={rtlStyles.text}>لا يوجد ضرائب</Text>}
+        {taxes.length > 0 ? (
+          taxes.map((tax) => (
+            <Text key={tax.id} style={rtlStyles.text}>
+              {tax.tax_name} - {tax.percent}% - {(tax.amount || 0).toLocaleString()}
+            </Text>
+          ))
+        ) : (
+          <Text style={rtlStyles.text}>لا يوجد ضرائب</Text>
+        )}
 
         <Text style={rtlStyles.totals}>الخصومات:</Text>
-        {discounts.length > 0 ? discounts.map((disc) => (
-          <Text key={disc.id} style={rtlStyles.text}>{disc.name} - {(disc.amount || 0).toLocaleString()}</Text>
-        )) : <Text style={rtlStyles.text}>لا يوجد خصومات</Text>}
+        {discounts.length > 0 ? (
+          discounts.map((disc) => (
+            <Text key={disc.id} style={rtlStyles.text}>
+              {disc.name} - {(disc.amount || 0).toLocaleString()}
+            </Text>
+          ))
+        ) : (
+          <Text style={rtlStyles.text}>لا يوجد خصومات</Text>
+        )}
 
-        <Text style={rtlStyles.totals}>السعر الكلي: {(invoiceData.invoice.full_price || 0).toLocaleString()}</Text>
-        <Text style={rtlStyles.totals}>الضريبة: {(invoiceData.invoice.tax || 0).toLocaleString()}</Text>
-        <Text style={rtlStyles.totals}>الخصم: {(invoiceData.invoice.discount || 0).toLocaleString()}</Text>
-        <Text style={rtlStyles.totals}>السعر النهائي: {(invoiceData.invoice.final_price || 0).toLocaleString()}</Text>
+        <Text style={rtlStyles.totals}>
+          السعر الكلي: {(invoiceData.invoice.full_price || 0).toLocaleString()}
+        </Text>
+        <Text style={rtlStyles.totals}>
+          الضريبة: {(invoiceData.invoice.tax || 0).toLocaleString()}
+        </Text>
+        <Text style={rtlStyles.totals}>
+          الخصم: {(invoiceData.invoice.discount || 0).toLocaleString()}
+        </Text>
+        <Text style={rtlStyles.totals}>
+          السعر النهائي: {(invoiceData.invoice.final_price || 0).toLocaleString()}
+        </Text>
       </Page>
     </Document>
   );
@@ -103,7 +164,7 @@ function ReservationsTab({ branchId }) {
   const handleCancel = async (reservationId) => {
     try {
       await deleteReservation(reservationId);
-      setReservations(reservations.filter(r => r.id !== reservationId));
+      setReservations(reservations.filter((r) => r.id !== reservationId));
     } catch (err) {
       console.error("فشل إلغاء الحجز", err);
       alert("❌ فشل إلغاء الحجز");
@@ -159,6 +220,10 @@ export default function CashierPage() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("invoices");
 
+  // Dialog State
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.branchId) setBranchId(user.branchId);
@@ -172,7 +237,9 @@ export default function CashierPage() {
     setLoading(true);
     setError("");
     try {
-      let allInvoices = [], page = 1, hasMore = true;
+      let allInvoices = [],
+        page = 1,
+        hasMore = true;
       while (hasMore) {
         const res = await fetchInvoicesByStatus(branchId, status, page);
         if (res.success && res.data.length > 0) {
@@ -213,10 +280,33 @@ export default function CashierPage() {
         discount: invoice.discount || 0,
         discount_id: invoice.discount_id || null,
         items: invoice.items || [],
-        status: "done"
+        status: "done",
       };
       await changeInvoiceStatus(invoice.id, payload);
       loadInvoices();
+    } catch (err) {
+      console.error("فشل تحديث حالة الفاتورة", err);
+      alert("❌ فشل تحديث حالة الفاتورة");
+    }
+  };
+
+  const handleCheckoutToPrint = async (invoice) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const cashierId = user?.id;
+      const payload = {
+        table_id: invoice.table_id,
+        branch_id: invoice.branch_id,
+        cashier_id: cashierId,
+        discount: invoice.discount || 0,
+        discount_id: invoice.discount_id || null,
+        items: invoice.items || [],
+        status: "print",
+      };
+      await changeInvoiceStatus(invoice.id, payload);
+      loadInvoices();
+      setSelectedInvoiceId(invoice.id);
+      setShowDialog(true);
     } catch (err) {
       console.error("فشل تحديث حالة الفاتورة", err);
       alert("❌ فشل تحديث حالة الفاتورة");
@@ -227,13 +317,17 @@ export default function CashierPage() {
     <div dir="rtl" className="max-w-6xl mx-auto mt-8 p-6 bg-white shadow rounded">
       <div className="mb-4 flex space-x-4 space-x-reverse">
         <button
-          className={`px-4 py-2 rounded ${activeTab === "invoices" ? "bg-red-600 text-white" : "bg-gray-200"}`}
+          className={`px-4 py-2 rounded ${
+            activeTab === "invoices" ? "bg-red-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => setActiveTab("invoices")}
         >
           الفواتير
         </button>
         <button
-          className={`px-4 py-2 rounded ${activeTab === "other" ? "bg-red-600 text-white" : "bg-gray-200"}`}
+          className={`px-4 py-2 rounded ${
+            activeTab === "other" ? "bg-red-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => setActiveTab("other")}
         >
           الحجوزات
@@ -244,9 +338,15 @@ export default function CashierPage() {
         <>
           <div className="mb-4">
             <label className="mr-2 font-bold">اختر الحالة:</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)} className="border px-2 py-1 rounded">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="border px-2 py-1 rounded"
+            >
               {["checkout", "print", "done"].map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
           </div>
@@ -275,6 +375,15 @@ export default function CashierPage() {
                     <td className="border p-2">{inv.full_price}</td>
                     <td className="border p-2">{inv.status}</td>
                     <td className="border p-2 space-x-2 space-x-reverse">
+                      {inv.status === "checkout" && (
+                        <button
+                          onClick={() => handlePrint(inv)}
+                          className="bg-red-500 text-white px-3 py-1 rounded"
+                        >
+                          🔄 تحويل لـ Print
+                        </button>
+                      )}
+
                       {inv.status === "print" && (
                         <>
                           <button
@@ -291,6 +400,7 @@ export default function CashierPage() {
                           </button>
                         </>
                       )}
+
                       {inv.status === "done" && (
                         <button
                           onClick={() => openDoneInvoiceInNewTab(inv)}
@@ -304,6 +414,16 @@ export default function CashierPage() {
                 ))}
               </tbody>
             </table>
+          )}
+
+          {showDialog && selectedInvoiceId && (
+            <CashierInvoiceDialog
+              invoiceId={selectedInvoiceId}
+              onClose={() => {
+                setShowDialog(false);
+                setSelectedInvoiceId(null);
+              }}
+            />
           )}
         </>
       )}

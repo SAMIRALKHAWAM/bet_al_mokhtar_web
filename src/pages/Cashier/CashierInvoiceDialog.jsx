@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDiscounts,getInvoiceDetails,changeInvoiceStatus, printInvoicePDF } from "../../services/CashierServices/cashierServices";
+import { getDiscounts,getInvoiceDetails,changeInvoiceStatus, fetchInvoiceById } from "../../services/CashierServices/cashierServices";
 import { useNavigate } from "react-router-dom";
 
 export default function CashierInvoiceDialog({ invoiceId, onClose }) {
